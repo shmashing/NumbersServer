@@ -1,0 +1,15 @@
+This application runs on the following assumptions:
+1. all the server/client logic actually lives server side. (i.e. there is not a separate client application that spins up to connect to the server)
+2. port 4000 will be open and ready to be bound to on host machine
+3. server will be started and ran on a machine that has JVM, JDK and Java installed
+4. sound socket network programming in java's standard library
+5. there is no packet loss in client -> server communications
+6. the newline sequence is the standard '\n'
+7. server will be started and run from the root of the directory and the log file to be generated and written to can be located in the root level of the directory
+8. client connections will be executed in a shell that supports input from standard I/O streams
+9. duplicate entries won't get written to the log file. All new unique entries are stored in a dictionary (which doesn't allow duplicate keys), so the assumption is that when we read from the dictionary to write, we are never pulling the same entry twice
+    9a. we use a synchronize() block to achieve this, which assumes to only let a single thread access the dictionary at a time, otherwise we could accidentally pull the same entry twice
+10. non-valid input is any non-integer input or any number that isn't 9 digits (unless prefixed with leading zeroes)
+11. the ten second report should happen on the server and not individual client connections
+12. this server spins up ~8 new threads and will be run on a computer with enough memory to handle that
+13. that client connections will terminate gracefully and not forcefully (i.e. not using ctrl+c)
