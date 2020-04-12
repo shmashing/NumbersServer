@@ -24,17 +24,21 @@ public class ClientHandler implements Runnable {
         while(_inputScanner.hasNextLine()) {
             var userInput = _inputScanner.nextLine();
 
+            var firstCharInString = userInput.charAt(0);
+            if (firstCharInString == '+') userInput = userInput.replace("+", "a");
+            if (firstCharInString == '-') userInput = userInput.replace("-", "a");
+
             if(userInput.toLowerCase().trim().equals("terminate")) {
                 terminateServer = true;
                 break;
             }
 
-            var parseResult = StringUtils.tryParseInteger(userInput);
             if (userInput.length() != 9)
             {
                 break;
             }
 
+            var parseResult = StringUtils.tryParseInteger(userInput);
             if (!parseResult)
             {
                 break;

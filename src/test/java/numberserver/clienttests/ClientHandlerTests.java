@@ -3,6 +3,7 @@ package numberserver.clienttests;
 import numberserver.caching.CacheUtils;
 import numberserver.client.ClientHandler;
 import numberserver.connection.ConnectionUtils;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -108,6 +109,52 @@ public class ClientHandlerTests {
         var newInput = CacheUtils.getInputCount();
         assert newInput == 2;
         assert CacheUtils.getDuplicates() == 2;
+        verify(_socket, times(1)).close();
+    }
+
+    @Test public void Run_CorrectlyCatchesPlusMinusSignsAndExits() throws IOException {
+        var badInput = "+12345678\n-12345678\n1234+6789\n1234-6789\n123456+789\n123456-789";
+        var inputStream = new ByteArrayInputStream(badInput.getBytes());
+        _inputScanner = new Scanner(inputStream);
+
+        _clientHandler = new ClientHandler(_socket, _inputScanner);
+
+        _clientHandler.run();
+
+        var newInput = CacheUtils.getInputCount();
+        Assert.assertEquals(0, newInput);
+        Assert.assertEquals(0, CacheUtils.getDuplicates());
+        verify(_socket, times(1)).close();
+    }
+
+    @Test public void Run_CorrectlyCatchesDecimalInputAndExits() throws IOException {
+        var badInput = "001.12345\n0.1234567\n12345678.\n1234567.9";
+        var inputStream = new ByteArrayInputStream(badInput.getBytes());
+        _inputScanner = new Scanner(inputStream);
+
+        _clientHandler = new ClientHandler(_socket, _inputScanner);
+
+        _clientHandler.run();
+
+        var newInput = CacheUtils.getInputCount();
+        Assert.assertEquals(0, newInput);
+        Assert.assertEquals(0, CacheUtils.getDuplicates());
+        verify(_socket, times(1)).close();
+    }
+
+    @Test public void Run_CorrectlyCatchesTooBigOfNumberAndDoesntBlowUp() throws IOException {
+        var maxInt = Integer.MAX_VALUE;
+        var badInput = Integer.toString(maxInt) + "123";
+        var inputStream = new ByteArrayInputStream(badInput.getBytes());
+        _inputScanner = new Scanner(inputStream);
+
+        _clientHandler = new ClientHandler(_socket, _inputScanner);
+
+        _clientHandler.run();
+
+        var newInput = CacheUtils.getInputCount();
+        Assert.assertEquals(0, newInput);
+        Assert.assertEquals(0, CacheUtils.getDuplicates());
         verify(_socket, times(1)).close();
     }
 }
