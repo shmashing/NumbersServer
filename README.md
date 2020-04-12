@@ -7,6 +7,7 @@ Short examples and snippits that should help you get a version of this server up
 #### Requirements
 This Project was built and is run with the following:
 - Java 14 (can be installed [here](https://www.java.com/en/download/))
+- JDK 14 (can be installed [here](https://www.oracle.com/java/technologies/javase-downloads.html))
 - Gradle 6.3 (can be installed [here](https://gradle.org/install/))
 
 #### Build

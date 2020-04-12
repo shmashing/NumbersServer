@@ -6,6 +6,7 @@ build
 
 # IntelliJ Files
 .idea/
+.DS_Store
 
 # Application Log File
 numbers.log

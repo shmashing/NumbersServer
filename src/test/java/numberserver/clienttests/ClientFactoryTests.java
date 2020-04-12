@@ -1,5 +1,7 @@
-package numberserver.client;
+package numberserver.clienttests;
 
+import numberserver.client.ClientHandlerFactory;
+import numberserver.client.IClientHandlerFactory;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;

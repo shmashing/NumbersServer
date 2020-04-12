@@ -28,6 +28,6 @@ public class ConnectionListenerFactoryTests {
     public void GetConnectionListener_ReturnsNonNullListener() {
         var listener = _connectionFactory.getConnectionListener();
 
-        Assert.assertNull(listener);
+        Assert.assertNotNull(listener);
     }
 }

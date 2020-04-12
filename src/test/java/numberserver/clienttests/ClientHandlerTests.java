@@ -1,6 +1,7 @@
-package numberserver.client;
+package numberserver.clienttests;
 
 import numberserver.caching.CacheUtils;
+import numberserver.client.ClientHandler;
 import numberserver.connection.ConnectionUtils;
 import org.junit.Before;
 import org.junit.Test;
