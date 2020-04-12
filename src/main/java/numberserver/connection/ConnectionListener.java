@@ -4,9 +4,8 @@ import numberserver.client.ClientHandler;
 import numberserver.client.IClientHandlerFactory;
 
 import java.io.IOException;
-import java.io.OutputStreamWriter;
-import java.io.PrintWriter;
 import java.net.ServerSocket;
+import java.net.Socket;
 import java.net.SocketException;
 import java.util.ArrayList;
 import java.util.List;
@@ -15,11 +14,12 @@ import java.util.Scanner;
 public class ConnectionListener implements Runnable {
     private ServerSocket _serverSocket = null;
     private int _maxConnections;
+    private int _port;
     private List<ClientHandler> _clients;
     private IClientHandlerFactory _clientFactory;
 
-    public ConnectionListener(int port, int maxConnections, IClientHandlerFactory clientFactory) throws IOException {
-        _serverSocket = new ServerSocket(port);
+    public ConnectionListener(int port, int maxConnections, IClientHandlerFactory clientFactory) {
+        _port = port;
         _maxConnections = maxConnections;
         _clientFactory = clientFactory;
         _clients = new ArrayList<>();
@@ -28,25 +28,18 @@ public class ConnectionListener implements Runnable {
     @Override
     public void run() {
         try {
+            _serverSocket = getServerSocket();
+
             while (!Thread.currentThread().isInterrupted()) {
-                if (ConnectionUtils.ActiveConnections >= _maxConnections) {
-                    continue;
-                }
+                if (ConnectionUtils.ActiveConnections.get() >= _maxConnections) continue;
                 try {
-                    var connectionSocket = _serverSocket.accept();
-                    ConnectionUtils.ActiveConnections++;
+                    var connectionSocket = getSocket();
+                    ConnectionUtils.ActiveConnections.incrementAndGet();
 
-                    var inputStream = connectionSocket.getInputStream();
-                    var outputStream = connectionSocket.getOutputStream();
-
-                    var inputScanner = new Scanner(inputStream, "UTF-8");
-                    var serverOutput = new PrintWriter(new OutputStreamWriter(outputStream, "UTF-8"), true);
-
-                    serverOutput.println("Successfully Connected! Feel Free to Start Entering Nine Digit Numbers!");
+                    var inputScanner = getInputScanner(connectionSocket);
                     var clientHandler = _clientFactory.getClient(connectionSocket, inputScanner);
 
-                    var thread = new Thread(clientHandler);
-                    thread.start();
+                    startClientThread(clientHandler);
                     _clients.add(clientHandler);
                 } catch (SocketException e) {
                     // server has exited
@@ -59,6 +52,24 @@ public class ConnectionListener implements Runnable {
         catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public ServerSocket getServerSocket() throws IOException {
+        return new ServerSocket(_port);
+    }
+
+    public Socket getSocket() throws IOException {
+        return _serverSocket.accept();
+    }
+
+    public Scanner getInputScanner(Socket socket) throws IOException {
+        var inputStream = socket.getInputStream();
+        return new Scanner(inputStream, "UTF-8");
+    }
+
+    public void startClientThread(ClientHandler client) {
+        var thread = new Thread(client);
+        thread.start();
     }
 
     public void closeSocketAndExit() throws IOException {

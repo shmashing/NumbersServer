@@ -2,8 +2,6 @@ package numberserver.connection;
 
 import numberserver.client.IClientHandlerFactory;
 
-import java.io.IOException;
-
 public class ConnectionListenerFactory implements IConnectionListenerFactory {
     private ConnectionListenerConfiguration _configuration;
     private IClientHandlerFactory _clientFactory;
@@ -13,7 +11,7 @@ public class ConnectionListenerFactory implements IConnectionListenerFactory {
         _clientFactory = clientFactory;
     }
 
-    public ConnectionListener getConnectionListener() throws IOException {
+    public ConnectionListener getConnectionListener() {
         return new ConnectionListener(_configuration.PortToListen, _configuration.MaxConnections, _clientFactory);
     }
 }

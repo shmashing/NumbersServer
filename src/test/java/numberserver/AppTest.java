@@ -4,11 +4,13 @@
 package numberserver;
 
 import org.junit.Test;
-import static org.junit.Assert.*;
+
+import static org.junit.Assert.assertNotNull;
 
 public class AppTest {
+
     @Test public void appResolves() {
-        App classUnderTest = new App();
-        assertNotNull("app should have a greeting", classUnderTest);
+        App server = new App();
+        assertNotNull("app should have a greeting", server);
     }
 }

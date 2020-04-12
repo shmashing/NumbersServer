@@ -67,6 +67,6 @@ public class ClientHandler implements Runnable {
 
     public void exitClientHandler() throws IOException {
         _clientSocket.close();
-        ConnectionUtils.ActiveConnections --;
+        ConnectionUtils.ActiveConnections.decrementAndGet();
     }
 }
